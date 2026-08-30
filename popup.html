@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>GitHub 加速器</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="brand">
+      <span class="logo">⚡</span>
+      <div class="brandtext">
+        <div class="title">GitHub 加速器</div>
+        <div class="sub" id="subline">加载中…</div>
+      </div>
+    </div>
+    <span class="pill" id="status"><i class="dot"></i><span id="statusText">…</span></span>
+  </header>
+
+  <section class="stats card">
+    <div class="stat" title="今日经加速线路的流量（按响应头 content-length 估算，分块传输不计入）">
+      <div class="v" id="stBytes">0 B</div>
+      <div class="k">今日流量*</div>
+    </div>
+    <div class="stat" title="最近 10 秒经加速线路的实际流量速率">
+      <div class="v" id="stSpeed">—</div>
+      <div class="k">实时速度</div>
+    </div>
+    <div class="stat" title="加速线路连续启用时长（切换到直连后清零）">
+      <div class="v" id="stTime">—</div>
+      <div class="k">加速时长</div>
+    </div>
+    <button class="mini" id="btnResetStats" title="清零今日统计">↺</button>
+  </section>
+
+  <div class="lasttest hidden" id="lastTest"></div>
+
+  <section class="card modebar">
+    <label class="switchrow">
+      <span class="modetext">
+        <b>🤖 自动加速</b>
+        <small>打开 GitHub 时自动启用，关闭所有 GitHub 页面后自动停止</small>
+      </span>
+      <input type="checkbox" class="switch" id="chkAuto">
+    </label>
+  </section>
+
+  <section id="routeList"></section>
+
+  <div class="actions">
+    <button class="primary" id="btnTest">⚡ 测速并切换最快线路</button>
+    <button class="ghost" id="btnDefaults" title="恢复内置线路列表，自定义线路会丢失">恢复默认</button>
+  </div>
+
+  <section class="toggles card">
+    <label class="switchrow">
+      <span>加速头像 <code>avatars.githubusercontent.com</code></span>
+      <input type="checkbox" class="switch" id="chkAvatars">
+    </label>
+    <label class="switchrow">
+      <span>加速静态资源 <code>githubassets</code>（部分线路不支持）</span>
+      <input type="checkbox" class="switch" id="chkAssets">
+    </label>
+  </section>
+
+  <details>
+    <summary>➕ 添加自定义线路</summary>
+    <div class="form">
+      <input type="text" id="cName" placeholder="线路名称，如：我的加速站">
+      <select id="cType">
+        <option value="prefix">加速前缀（推荐）</option>
+        <option value="mirror">全站镜像</option>
+      </select>
+      <input type="text" id="cValue" placeholder="前缀地址，如：https://my-proxy.example.com">
+      <textarea id="cValueMirror" style="display:none"
+        placeholder='镜像域名映射 JSON，例如：&#10;{ "github.com": "mirror.example.com",&#10;  "raw.githubusercontent.com": "raw.mirror.example.com" }'></textarea>
+      <button id="btnAdd">添加并启用</button>
+    </div>
+  </details>
+
+  <details id="jsonBox">
+    <summary>🛠 高级：编辑全部线路（JSON）</summary>
+    <div class="form">
+      <textarea id="jsonEditor" spellcheck="false"></textarea>
+      <div class="form row">
+        <button id="btnSaveJson">保存线路</button>
+        <span id="jsonMsg"></span>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>❓ 使用说明</summary>
+    <ul>
+      <li><b>加速前缀</b>：页面走官方，raw / Releases / 源码打包 / gist 下载走加速线路（推荐）。</li>
+      <li><b>全站镜像</b>：整站跳转到镜像站，浏览更快但失效风险较高。</li>
+      <li>公共线路随时可能失效：测速全部超时时，请「添加自定义线路」。</li>
+      <li>⚠️ 请勿在镜像 / 加速站登录账号，勿访问私有仓库敏感内容。</li>
+      <li>* 流量按响应头 content-length 估算，仅供参考。</li>
+    </ul>
+  </details>
+
+  <footer class="foot">终端 git 不走浏览器加速：<code>git clone https://前缀/https://github.com/owner/repo.git</code></footer>
+
+  <div id="toast"></div>
+
+  <script src="common.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
